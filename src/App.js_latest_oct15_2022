@@ -1,5 +1,6 @@
 import React,{ Component } from 'react'
 import Web3 from 'web3'
+import logo from './logo.svg';
 import './App.css';
 
 
@@ -7,7 +8,7 @@ import './App.css';
 class Form extends Component{
 
 
-    constructor(props){
+constructor(props){
 	super(props)
 	this.state = { selectedOption: ' ', wager: 0, account: '', player1: '' ,
             playerNumber: '',
@@ -16,62 +17,90 @@ class Form extends Component{
             historyData: [],
             snackbar: false,
             message: '',
-        }
+ }
 	this.handleChange = this.handleChange.bind(this)
         this.onValueChange = this.onValueChange.bind(this);
 	this.handleSubmit = this.handleSubmit.bind(this)
-    }
+
+ //      this.state = {
+ //           playerNumber: '',
+ //           highLow: 'lower',
+ //           wager: '',
+ //           history: [],
+ //           snackbar: false,
+ //           message: '',
+ //       }
 
 
-    componentWillMount(){
+}
+
+
+	componentWillMount(){
 		this.loadBlockchainData()
-    }
+	}
 
 
-    async loadBlockchainData(){
+	async loadBlockchainData(){
 
-	console.log('just before the connect')
-	const web3 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-223-48-26.us-west-2.compute.amazonaws.com:8545"))
-	this.setState({ web3 : web3 })
-	const accounts = await web3.eth.getAccounts()
-	console.log("account", accounts[0])
-	console.log("account1", accounts[1])
-	this.setState({ account: accounts[0] })
-	const owner = accounts[0]
-	const player1 = accounts[1]
-	//this.setState({ player1: accounts[1] })
-	this.setState({ player1 })
-	var config  = require('./Gaming.json');   // put a copy in /src directory.....
-	// then reference as ....    -> config.abi 
-	const contract = new web3.eth.Contract(config.abi);
-	this.setState({ contract }) 
-	this.setState({ data: contract })
-	this.setState({ contract: contract })
+		console.log('just before the connect')
+		const web3 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-223-48-26.us-west-2.compute.amazonaws.com:8545"))
 
-	// deployed via the web3 console interface...
-	// more
+		this.setState({ web3 : web3 })
+		const accounts = await web3.eth.getAccounts()
+		console.log("account", accounts[0])
+		console.log("account1", accounts[1])
+		this.setState({ account: accounts[0] })
 
-	contract.options.address = "0x64616f81c7f0871d31126e1ad615ED21165AB669";
-	contract.methods.fundGame().send({from: owner, value: web3.utils.toWei('10', 'ether')}).then((f) => console.log(f))	
+		const owner = accounts[0]
+		const player1 = accounts[1]
+		//this.setState({ player1: accounts[1] })
+		this.setState({ player1 })
+		var config  = require('./Gaming.json');   // put a copy in /src directory.....
+		// then reference as ....    -> config.abi 
+		const contract = new web3.eth.Contract(config.abi);
+		this.setState({ contract }) 
+		this.setState({ data: contract })
+		this.setState({ contract: contract })
 
-	const initialBalance = await web3.eth.getBalance(player1)
-	alert("initialBalance     " + String(initialBalance));
-	console.log("initialBalance",initialBalance)
-	const initialBalanceInEther = Number(web3.utils.fromWei(initialBalance, 'ether'))
-	alert("initialBalanceInEther   " + String(initialBalanceInEther));
-	console.log("initialBalanceInEther",initialBalanceInEther)
-		
-	//   two parameters this time: ( will mystery number be higher or lower than your given umber are higher(true) or lower(false)    )
-	console.log("just before first call..., passing in a '12' as the player number with bet to be higher.")
+		// deployed via the web3 console interface...
+		// more
 
-	// true:  mystery number > player
-	// false: mystery number < player
+		contract.options.address = "0x27A4A99b5Eabd0900ad158cD067df0A406a4ff08";
+		contract.options.address = "0x64616f81c7f0871d31126e1ad615ED21165AB669";
+		contract.methods.fundGame().send({from: owner, value: web3.utils.toWei('10', 'ether')}).then((f) => console.log(f))	
 
-       	// FIX !   I need to put in a second to get this to run! a 'call' will only perform a read and not update the blockchain
- 	// put in the user account address  ------ the short one , not the private key!!!!
-	let gameRound =   await contract.methods.winOrLose(10, true).send({from: player1 ,value: web3.utils.toWei('1', 'ether')}).then((f) => console.log(f))
-	gameRound =   await contract.methods.winOrLose(10, false).call(console.log)
-	gameRound =   await contract.methods.winOrLose(10, false).call(console.log)
+
+    		const initialBalance = await web3.eth.getBalance(player1)
+		alert("initialBalance     " + String(initialBalance));
+		console.log("initialBalance",initialBalance)
+		const initialBalanceInEther = Number(web3.utils.fromWei(initialBalance, 'ether'))
+		alert("initialBalanceInEther   " + String(initialBalanceInEther));
+		console.log("initialBalanceInEther",initialBalanceInEther)
+
+		//   two parameters this time: ( will mystery number be higher or lower than your given umber are higher(true) or lower(false)    )
+		console.log("just before first call..., passing in a '12' as the player number with bet to be higher.")
+
+
+		// true:  mystery number > player
+		// false: mystery number < player
+
+        	// FIX !   I need to put in a second to get this to run! a 'call' will only perform a read and not update the blockchain
+	 	// put in the user account address  ------ the short one , not the private key!!!!
+    		//let gameRound =   await contract.methods.winOrLose(10, false).send({from: player1 }).then((f) => console.log(f))
+   		//let gameRound =   await contract.methods.winOrLose(10, false).send({from: '0x0Afa9B26194b8f0752b9005D28Da8B55fFED69BE' }).then((f) => console.log(f))
+  		// works.....let gameRound =   await contract.methods.winOrLose(10, false, web3.utils.toWei('10', 'ether')).send({from: player1 ,value: web3.utils.toWei('1', 'ether')}).then((f) => console.log(f))
+  		let gameRound =   await contract.methods.winOrLose(10, true).send({from: player1 ,value: web3.utils.toWei('1', 'ether')}).then((f) => console.log(f))
+		gameRound =   await contract.methods.winOrLose(10, false).call(console.log)
+		//let gameRound =   await contract.methods.winOrLose(10, false).send({from: player1 }).then((f) => console.log(f))
+		gameRound =   await contract.methods.winOrLose(10, false).call(console.log)
+
+
+		//0x7ee0a017020194d3ca679c2f8c2dc3cf9459e333e5a370ad79b6f33d6ccc8834
+
+		console.log("just after the first call to winOrLose")
+
+
+    		alert("gameRound A       ",gameRound   )
 
 }
 
@@ -136,12 +165,50 @@ async handleSubmit(event){
       if (!err){
         var obj=JSON.parse(JSON.stringify(events));
         var array = Object.keys(obj)
+	console.log("array" , array)
+	console.log("obj", obj)
+        console.log("returned values",obj[array[0]].returnValues);
+        console.log("returned values1",obj[array[0]].returnValues[0]);
+        console.log("returned values2",obj[array[0]].returnValues[1]);
+        console.log("returned values3",obj[array[0]].returnValues[2]);
+        console.log("returned values4",obj[array[0]].returnValues[3]);
+        console.log("returned values5",obj[array[0]].returnValues[4]);
+        console.log("returned values1*",obj[array[1]].returnValues[0]);
+        console.log("returned values2*",obj[array[1]].returnValues[1]);
+        console.log("returned values3*",obj[array[1]].returnValues[2]);
+        console.log("returned values4*",obj[array[1]].returnValues[3]);
+        console.log("returned values5*",obj[array[1]].returnValues[4]);
+        console.log("returned values1*",obj[array[array.length-1]].returnValues[0]);
+        console.log("returned values2*",obj[array[array.length-1]].returnValues[1]);
+        console.log("returned values3*",obj[array[array.length-1]].returnValues[2]);
+        console.log("returned values4*",obj[array[array.length-1]].returnValues[3]);
+        console.log("returned values5*",obj[array[array.length-1]].returnValues[4]);
+        console.log("returned values5*",obj[array[array.length-1]].returnValues[5]);
+        console.log("returned values5*",obj[array[array.length-1]].returnValues[6]);
+        console.log("returned values5*",obj[array[array.length-1]].returnValues[7]);
+        console.log("returned values5*",obj[array[array.length-1]].returnValues[8]);
+
+	console.log("array.length ===>", array.length)
+		//this.setState({ contract }) 
+		//this.setState({ data: contract })
+		//this.setState({ contract: contract })
 	this.setState({ history:  JSON.stringify(obj[array[1]].returnValues) })
+
         console.log("returned values (last one) ",obj[array[1]].returnValues);
+	//this.state.history.push({ history: obj[array[1]].returnValues } )
 	const newHistory = this.state.historyData
 	newHistory.push({ historyData: JSON.stringify(obj[array[1]].returnValues) } )
 	this.setState({ historyData :  newHistory })
 	console.log("historyData   ===>" , this.state.historyData )
+
+
+
+        //console.log("returned values",obj[array[2]].returnValues);
+        //console.log("returned values",obj[array[3]].returnValues);
+        //console.log("returned values",obj[array[4]].returnValues);
+        //console.log("returned values",obj[array[5]].returnValues);
+        //console.log("returned values",obj[array[6]].returnValues);
+        //console.log("returned values",obj[array[7]].returnValues);
 
       }
       else {
@@ -214,6 +281,18 @@ async handleSubmitWithHistory(event){
 
 }
 
+
+
+
+
+
+
+
+
+
+
+// Method causes to store all the values of the
+// input field in react state single method handle
 // input changes of all the input field using ES6
 // javascript feature computed property names
 handleChange(event){
@@ -269,7 +348,7 @@ render(){
 		/>
 		</div>
 				<div>
-		<button>Play Round!</button>
+		<button>Create Account</button>
 		</div>
 	</form>
 	)
