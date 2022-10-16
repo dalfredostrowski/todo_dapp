@@ -1,6 +1,6 @@
-var Gaming = artifacts.require("./Gaming.sol");
+var TodoList  = artifacts.require("./TodoList.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(Gaming);
+  deployer.deploy(TodoList);
 };
 
